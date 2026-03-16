@@ -1,0 +1,144 @@
+/* =========================================
+   容器布局优化
+   ========================================= */
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 8px; 
+}
+
+/* =========================================
+   Apple 级液态毛玻璃按钮 (Liquid Glass Icon Button)
+   ========================================= */
+.icon-btn {
+  margin: 4px;
+  /* 极其清透的基础底色 (仅 4% 的白) */
+  background: rgba(255, 255, 255, 0.04); 
+  /* 极细的半透明外边框 */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  
+  /* 核心技术 1：光学模糊与色彩饱和度提升，完美复刻 iOS 质感 */
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%); /* 兼容 Safari */
+  
+  /* 核心技术 2：模拟玻璃厚度的物理高光与底部的微弱投影 */
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.15), /* 顶部内部的反光线 */
+    0 4px 12px rgba(0, 0, 0, 0.2);             /* 悬浮阴影 */
+    
+  border-radius: var(--radius-sm, 12px); /* 保持均质圆角系统 */
+  padding: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  width: 36px;
+  height: 36px;
+  
+  /* 更加 Q 弹的物理缓动曲线 */
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+/* 悬停时的光线提亮 */
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.25), 
+    0 8px 16px rgba(0, 0, 0, 0.3);
+  transform: translateY(-1px);
+}
+
+/* 真实的物理按压反馈 */
+.icon-btn:active {
+  transform: scale(0.92) translateY(1px);
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2); /* 按下时内部产生暗角 */
+}
+
+.icon-btn:focus-visible {
+  outline: 2px solid #0A84FF;
+  outline-offset: 2px;
+}
+
+.icon-btn i, 
+.icon-btn svg {
+  width: 18px;
+  height: 18px;
+  color: #656565; 
+  /* 给图标本身也加一点微弱的阴影，让它像是嵌在玻璃里 */
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
+}
+
+.icon-btn svg {
+  stroke: currentColor;
+  stroke-width: 1.5; 
+  fill: none;
+}
+
+.hidden { display: none !important; }
+
+/* =========================================
+   清透版加载指示器 (Sleek Loading Spinner)
+   ========================================= */
+.loading-spinner {
+  --p: 0;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* 复用液态玻璃材质 */
+  background: rgba(255, 255, 255, 0.023);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15), 0 4px 12px rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-sm, 12px);
+  margin: 4px;
+  position: relative;
+  
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+  font-weight: 600;
+  color: #8d8d8d;
+  font-variant-numeric: tabular-nums;
+}
+
+.loading-spinner::before {
+  content: "";
+  display: block;
+  width: 20px; /* 稍微放大进度环，显得更舒展 */
+  height: 20px;
+  border-radius: 999px;
+  
+  /* 优化进度条颜色：强烈的白光扫过极暗的轨道 */
+  background: conic-gradient(
+    rgb(100, 100, 100) calc(var(--p) * 1%), 
+    rgba(255, 255, 255, 0.05) 0
+  );
+  
+  /* 优化 Mask：将 2px 改为 1.5px，让进度环变得极细、极具科技感 */
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 1.5px), #000 0);
+  mask: radial-gradient(farthest-side, transparent calc(100% - 1.5px), #000 0);
+}
+
+.loading-spinner::after {
+  content: attr(data-pct);
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.5px; /* 数字增加一点字距，更有 Muji 的空灵感 */
+}
+
+.loading-spinner[data-pct="100"]::after {
+  content: "";
+  opacity: 0;
+}

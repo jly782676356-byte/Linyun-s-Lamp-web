@@ -1,0 +1,244 @@
+/* =========================================
+   全局变量：建立悬浮 UI 的参数化设计系统
+   ========================================= */
+
+:root {
+  /* 黑曜石/建筑石墨灰玻璃：更深邃、去除任何偏色的中性基底 */
+  --hud-bg: rgba(255, 255, 255, 0.75); 
+  --hud-border: rgba(255, 255, 255, 0.05); /* 极其克制的边缘 */
+  --hud-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --hud-shadow: 0 12px 30px rgba(142, 142, 142, 0.6);
+  
+  /* 抛弃科技蓝，采用 Muji/Apple Pro 的高级单色调 */
+  --accent-primary: #dce8ef; /* 类似 Muji 未漂白纸张的暖灰白 / 钛白色 */
+  --accent-text: #121212;    /* 搭配亮色的炭黑色文字，极具版画感 */
+  
+  /* 气泡色彩对比度翻转 */
+  --bubble-user: var(--accent-primary); 
+  --bubble-sys: rgba(255, 255, 255, 0.04); /* 极弱的系统气泡，完全退居幕后 */
+  
+  /* 均质圆角系统 */
+  --radius-base: 12px;
+  --radius-lg: calc(var(--radius-base) * 2);
+  --radius-md: calc(var(--radius-base) * 1.5);
+  --radius-sm: var(--radius-base);
+}
+/* =========================================
+   基础重置与排版
+   ========================================= */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+  color: #F5F5F7;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* UI 根节点：允许鼠标穿透到底层 3D 画布 */
+#ui-root {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100; /* 确保 UI 永远在最顶层 */
+}
+
+/* =========================================
+   核心面板 (Panels): 引入物理级玻璃折射
+   ========================================= */
+.panel {
+  position: absolute;
+  pointer-events: auto;
+  padding: 15px; /* 稍微增加内边距，提升呼吸感 */
+
+  /* 液态玻璃核心技术 */
+  background: var(--hud-bg);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  
+  /* 统一大圆角与物理高光厚度 */
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--hud-border);
+  box-shadow: var(--hud-highlight), var(--hud-shadow);
+}
+
+.panel.info {
+  top: 24px;
+  left: 24px;
+  /* 修正原代码的黑色文字，在深色玻璃上必须用纯白提升对比度 */
+  color: #FFFFFF; 
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* =========================================
+   底部工具栏 (Toolbar) & 按钮
+   ========================================= */
+.panel.toolbar {
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  padding: 12px 16px; /* 工具栏更扁平紧凑 */
+  border-radius: 999px; /* 胶囊形状，Muji/Apple 常用于中心控制台 */
+}
+
+button {
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #EBEBF5;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid transparent;
+  border-radius: 999px; /* 跟随工具栏的胶囊语言 */
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+button:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: scale(0.95); /* 物理按压反馈 */
+}
+
+button.active {
+  background: #FFFFFF;
+  color: #000000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* =========================================
+   聊天容器 (Chat Container)
+   ========================================= */
+.panel.chat-container {
+  bottom: 24px;
+  right: 24px;
+  width: 320px; /* 稍微加宽，避免文字换行过于频繁 */
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chat-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(218, 218, 235, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: -4px;
+}
+
+/* =========================================
+   iMessage 级聊天气泡 (Speech & Chat Bubbles)
+   ========================================= */
+.chat-bubble {
+  max-width: 85%;
+  padding: 10px 14px;
+  margin: 4px 0;
+  border-radius: var(--radius-md);
+  line-height: 1.4;
+  font-size: 14px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  box-shadow: 0 2px 4px rgba(86, 86, 86, 0.1);
+}
+
+/* 用户气泡：Apple System Blue */
+.chat-bubble.user {
+  margin-left: auto;
+  background: var(--bubble-user);
+  color: rgb(39, 39, 39);
+  /* 苹果细节：发送方的右下角变直角，暗示对话方向 */
+  border-bottom-right-radius: 4px; 
+}
+
+/* 系统气泡：毛玻璃白灰 */
+.chat-bubble.sys {
+  margin-right: auto;
+  background: var(--bubble-sys);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #c4c4c4;
+  border: 1px solid var(--hud-border);
+  /* 苹果细节：接收方的左下角变直角 */
+  border-bottom-left-radius: 4px; 
+}
+
+.chat-meta {
+  font-size: 11px;
+  color: rgba(224, 224, 224, 0.5);
+  margin-top: 2px;
+  margin-bottom: 8px;
+  text-align: right;
+}
+
+/* =========================================
+   输入区域 (Input Row)
+   ========================================= */
+.chat-input-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+#chatInput {
+  flex: 1;
+  padding: 10px 14px;
+  background: rgba(224, 224, 224, 0.3); /* 极暗的输入槽，产生凹陷感 */
+  color: rgb(0, 0, 0);
+  border: 1px solid var(--hud-border);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: border-color 0.2s;
+  font-size: 14px;
+}
+
+#chatInput:focus {
+  border-color: var(--bubble-user); /* 聚焦时亮起系统蓝 */
+}
+
+#btnSend {
+  padding: 0 16px;
+  background: var(--bubble-user);
+  color: rgb(167, 167, 167);
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#btnSend:active {
+  transform: scale(0.9);
+}
+
+/* =========================================
+   3D 空间注释气泡 (Floating Speech Bubble)
+   ========================================= */
+#speechBubble {
+  position: absolute;
+  z-index: 10;
+  max-width: 240px;
+  padding: 12px 16px;
+  
+  /* 采用与系统面板一致的材质，但更轻量化 */
+  background: var(--hud-bg);
+  backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid var(--hud-border);
+  box-shadow: var(--hud-shadow);
+  color: #acacac;
+  
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+  transform: translate(-50%, -100%);
+  display: none;
+  font-size: 13px;
+  line-height: 1.5;
+}

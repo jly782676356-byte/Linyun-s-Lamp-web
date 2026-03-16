@@ -1,0 +1,109 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #1d1d1f; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+
+  /* --- 1. 背景图片核心设置 --- */
+  /* 使用 linear-gradient 给图片盖一层极淡的遮罩，增加文字识别度 */
+  background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), 
+              url('../Assets/Lamp First Pages.png');
+  background-size: cover;      /* 图片铺满且不拉伸 */
+  background-position: center; /* 图片居中 */
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* 视差效果，背景不随内容滚动 */
+}
+
+/* 2. 登录卡片 - 毛玻璃效果重构 */
+.login-card {
+  /* --- 核心修改：半透明背景与模糊滤镜 --- */
+  background-color: rgba(255, 255, 255, 0.7); /* 降低透明度至 70% */
+  backdrop-filter: blur(20px) saturate(180%);  /* 苹果官方毛玻璃核心参数 */
+  -webkit-backdrop-filter: blur(20px) saturate(180%); /* 兼容 Safari */
+  
+  width: 100%;
+  max-width: 380px;
+  border-radius: 28px; /* 稍微加大圆角，配合毛玻璃更有液态感 */
+  
+  /* 增加一个细微的白色边框，模拟玻璃边缘的折射高光 */
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  
+  /* 调整阴影：毛玻璃通常配合更柔和、扩散范围更大的阴影 */
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); 
+  padding: 48px 32px;
+}
+
+/* 3. 品牌标识与排版 */
+.login-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.login-logo {
+  width: 56px;
+  height: 56px;
+  background-color: rgba(29, 29, 31, 0.9); /* Logo 也稍微透明一点点 */
+  color: #ffffff;
+  font-size: 28px;
+  font-weight: 600;
+  border-radius: 14px; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.login-title {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.login-subtitle {
+  font-size: 14px;
+  color: #3c3c43; /* 稍深一点的灰色，确保在玻璃背景上清晰 */
+}
+
+/* 4. 分割线处理 */
+.login-divider {
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.1); /* 改为半透明分割线 */
+  margin: 24px 0;
+  width: 100%;
+}
+
+/* 5. 按钮设计 */
+.login-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px 16px;
+  /* 按钮也采用半透明感 */
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 980px; 
+  background-color: rgba(255, 255, 255, 0.8);
+  color: #1d1d1f;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.login-btn:hover {
+  background-color: #ffffff;
+  transform: translateY(-1px); /* 增加一个微小的悬浮动效 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}

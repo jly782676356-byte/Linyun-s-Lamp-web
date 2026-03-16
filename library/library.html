@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Your Spaces</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/dark.css" />
+    <link rel="stylesheet" href="../styles/library-styles.css" />
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/shoelace.js"></script>
+</head>
+
+<body class="sl-theme-dark">
+    <div class="app-layout" id="appLayout">
+        
+        <aside class="app-sidebar">
+            <div class="sidebar-top">
+                <div class="sidebar-header-row">
+                    <h1 class="sidebar-title">Spaces</h1>
+                    <sl-icon-button id="btnHideSidebar" name="layout-sidebar" label="Close Sidebar"></sl-icon-button>
+                </div>
+                <p class="sidebar-subtitle">Manage your rooms</p>
+                
+                <sl-button id="btnNewRoom" variant="primary" class="width-full custom-radius">
+                    <sl-icon slot="prefix" name="plus-lg"></sl-icon>
+                    New Space
+                </sl-button>
+            </div>
+
+            <div class="sidebar-spacer"></div>
+
+            <div class="sidebar-bottom">
+                <div class="user-chip" id="userChip">
+                    <div class="user-avatar custom-radius" id="userAvatar">U</div>
+                    <div class="user-meta">
+                        <div class="user-name" id="userName">Signed in</div>
+                        <div class="user-email" id="userEmail"></div>
+                    </div>
+                </div>
+
+                <sl-button id="btnSignOut" variant="default" outline class="width-full custom-radius">
+                    <sl-icon slot="prefix" name="box-arrow-right"></sl-icon>
+                    Sign out
+                </sl-button>
+            </div>
+        </aside>
+
+        <main class="app-main">
+            <div class="main-toolbar">
+                <sl-icon-button id="btnShowSidebar" name="layout-sidebar-inset" label="Open Sidebar"
+                    style="font-size: 1.5rem; display: none;"></sl-icon-button>
+            </div>
+            <section id="roomGrid" class="room-grid"></section>
+        </main>
+    </div>
+
+    <sl-dialog label="Create new space" id="createSpaceDialog" class="custom-dialog">
+        <div class="dialog-help">Name + description, then we generate a room key.</div>
+        <div class="form-grid">
+            <sl-input id="spaceName" label="Name" required maxlength="60" placeholder="e.g. Lobby Test"></sl-input>
+            <sl-textarea id="spaceDesc" label="Description" maxlength="300" placeholder="Optional notes…"></sl-textarea>
+            <sl-input id="spaceRoomKey" label="Room key (optional)" maxlength="80"
+                placeholder="Leave empty to auto-generate"></sl-input>
+            <div class="hint">This becomes <code>?room=...</code> in the viewer.</div>
+        </div>
+        <sl-button slot="footer" id="btnCancel" variant="default" class="custom-radius">Cancel</sl-button>
+        <sl-button slot="footer" id="btnCreate" variant="primary" class="custom-radius">Create</sl-button>
+    </sl-dialog>
+
+    <sl-dialog label="Delete space?" id="deleteDialog" class="custom-dialog">
+        <div id="deleteText" class="dialog-help"></div>
+        <sl-button slot="footer" id="btnDeleteCancel" variant="default" class="custom-radius">Cancel</sl-button>
+        <sl-button slot="footer" id="btnDeleteConfirm" variant="danger" class="custom-radius">Delete</sl-button>
+    </sl-dialog>
+
+    <template id="cardTemplate">
+        <div class="room-card custom-radius">
+            <div class="room-card-top">
+                <div class="room-card-title">
+                    <div class="room-name"></div>
+                    <div class="room-id"><span class="room-id-label">Room key:</span> <span class="room-id-value"></span></div>
+                </div>
+                <sl-icon-button name="trash" label="Delete" class="room-delete-btn" data-action="delete"
+                    style="font-size: 1.2rem;">
+                </sl-icon-button>
+            </div>
+
+            <div class="room-desc"></div>
+            
+            <div class="room-card-bottom">
+                <div class="room-meta"></div>
+                <sl-button class="room-share-link custom-radius" variant="default" size="small">Share</sl-button>
+                <sl-button class="room-open-link custom-radius" variant="primary" size="small">Open</sl-button>
+            </div>
+        </div>
+    </template>
+    
+    <script type="module" src="./library.js"></script>
+</body>
+</html>

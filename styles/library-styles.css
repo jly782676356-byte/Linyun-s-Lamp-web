@@ -1,0 +1,344 @@
+/* =========================================
+   全局变量：构建一致的色彩与参数化系统
+   ========================================= */
+:root {
+
+  --bg-elevated: #f3f1e779;         /* 悬浮层 */
+  --bg-hover: #bfe0e2;            /* 交互反馈色 */
+  --text-primary: #4c4c4c;        /* 柔和白 */
+  --text-secondary: #767676;      /* 次要信息灰 */
+  --border-subtle: rgba(207, 194, 173, 0.08); /* 极细微的边界线 */
+
+  /* =========================================
+     核心设计：一致的参数化平滑圆角系统
+     ========================================= */
+  --base-radius: 12px;           /* 定义一个基准圆角值，所有其他值基于此计算 */
+  
+  /* 根据元素的层级和尺寸定义一致的、均质的像素圆角值 */
+  --radius-lg: calc(var(--base-radius) * 2);   /* 24px: 用于最大的元素，如卡片 */
+  --radius-md: calc(var(--base-radius) * 1.5); /* 18px: 用于中等元素，如头像、按钮 */
+  --radius-sm: var(--base-radius);             /* 12px: 用于小元素，如输入框、标签 */
+  --radius-xs: calc(var(--base-radius) * 0.5); /* 6px: 用于极小元素 */
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background: var(--bg-base); /* 回退背景色 */
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased; 
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+  position: relative;
+}
+
+/* 使用伪元素添加模糊背景图，这样不会影响前景内容的清晰度 */
+body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* 替换下方的相对路径为你图片的实际路径 */
+  background-image: url('../Assets/Lamp First Pages.png'); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  
+  /* 毛玻璃核心：模糊滤镜 */
+  /* blur(20px) 控制模糊程度，brightness 控制亮度暗度 */
+  filter: blur(15px) brightness(0.9); 
+  
+  /* 确保背景在最底层 */
+  z-index: -1;
+  /* 稍微放大背景图，防止模糊后的边缘出现白边 */
+  transform: scale(1.1);
+}
+.app-layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  /* 叠加一层极其微弱的暖色渐变，强化“温馨台灯”氛围 */
+  background: linear-gradient(
+    rgba(214, 205, 193, 0.2), 
+    rgba(255, 255, 255, 0.1)
+  );
+}
+/* =========================================
+   侧边栏设计 (Sidebar)
+   ========================================= */
+.app-sidebar {
+  width: 260px;
+  background: var(--bg-elevated);
+  border-right: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  flex-shrink: 0;
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+              padding 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.sidebar-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+  min-height: 40px;
+}
+
+.sidebar-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em; 
+}
+
+.sidebar-subtitle {
+  margin: 4px 0 24px 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.sidebar-spacer {
+  flex-grow: 1;
+}
+
+.app-layout.sidebar-closed .app-sidebar {
+  width: 0;
+  padding-left: 0;
+  padding-right: 0;
+  border-right: none;
+}
+
+#btnShowSidebar {
+  display: none;
+}
+
+.app-layout.sidebar-closed #btnShowSidebar {
+  display: inline-flex !important;
+}
+
+/* =========================================
+   主内容区 (Main Content)
+   ========================================= */
+.app-main {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 32px;
+  background: var(--bg-base); 
+  position: relative;
+}
+
+.main-toolbar {
+  min-height: 0;
+  display: flex;
+  align-items: center;
+}
+
+.app-layout.sidebar-closed .main-toolbar {
+  margin-bottom: 20px;
+}
+
+.width-full {
+  width: 100%;
+}
+
+.width-full::part(base) {
+  width: 100%;
+  justify-content: flex-start;
+}
+
+/* =========================================
+   卡片网格系统 (Card Grid)
+   ========================================= */
+.room-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px; 
+  padding-bottom: 40px;
+}
+
+/* --- 应用均质一致的圆角系统 --- */
+.room-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  
+  /* 应用参数化系统：最大元素使用最大圆角 */
+  border-radius: var(--radius-lg); 
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  aspect-ratio: 4 / 3; 
+  
+  /* 极其微弱的基础阴影，制造层次感，并柔化边缘 */
+  box-shadow: 0 4px 24px hsl(50, 81%, 59%);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.room-card:hover {
+  background: var(--bg-hover);
+  border-color: rgba(199, 15, 15, 0.15);
+  transform: translateY(-4px) scale(1.01); 
+  box-shadow: 0 12px 32px rgba(23, 227, 220, 0.6); 
+}
+
+.room-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.room-name {
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+
+.room-id {
+  font-size: 11px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: var(--text-secondary);
+  background: #eae3d6;
+  padding: 4px 8px;
+  
+  /* 应用小圆角 */
+  border-radius: var(--radius-xs); 
+  display: inline-block;
+} 
+
+.room-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  line-height: 1.5;
+  flex-grow: 1;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.room-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.room-meta {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* =========================================
+   表单与对话框细节 (Forms & Dialogs)
+   ========================================= */
+sl-dialog::part(panel) {
+  /* 大弹窗使用大圆角 */
+  border-radius: var(--radius-lg);
+}
+
+.dialog-help {
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.form-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: -8px;
+}
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  background: #6f6f6f;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+/* =========================================
+   用户信息卡片 (User Chip)
+   ========================================= */
+.user-chip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  margin-bottom: 10px;
+  
+  /* 中等元素使用中等圆角 */
+  border-radius: var(--radius-md); 
+  background: var(--border-subtle);
+  border: 1px solid transparent;
+  transition: background 0.2s ease;
+}
+
+.user-chip:hover {
+  background: rgba(255, 47, 47, 0.12);
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  
+  /* 头像使用中等圆角 */
+  border-radius: var(--radius-md); 
+  display: grid;
+  place-items: center;
+  font-weight: 600;
+  font-size: 15px;
+  color: #fff;
+  user-select: none;
+  background: #cfbf78; 
+}
+
+.user-meta {
+  min-width: 0;
+  flex: 1;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-email {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Shoelace 组件细节覆盖 */
+sl-button::part(base) {
+  /* 按钮使用中等圆角 */
+  border-radius: var(--radius-md);
+}
+
+sl-input::part(base),
+sl-textarea::part(base) {
+  /* 输入框使用小圆角 */
+  border-radius: var(--radius-sm);
+}
